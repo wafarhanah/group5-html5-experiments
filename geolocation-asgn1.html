@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Asian Fashion Map</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; margin: 0; padding: 0; }
+        #map { height: 500px; width: 100%; }
+        #info { padding: 10px; font-size: 1.2em; background: #f4f4f4; margin-top: 10px; }
+        .theme { padding: 15px; margin: 10px auto; width: 50%; border-radius: 8px; font-size: 1.1em; font-weight: bold; }
+        .baju-kurung { background: #ffcc00; color: #333; }
+        .kimono { background: #ff9999; color: #fff; }
+        .hanbok { background: #ff66b2; color: #fff; }
+        .cheongsam { background: #ff3333; color: #fff; }
+        .sarong { background: #66ccff; color: #fff; }
+        .kurta { background: #ff9933; color: #fff; }
+        .unknown { background: #888888; color: #fff; }
+    </style>
+</head>
+<body>
+
+    <h1>👗 Asian Fashion Map 🌏</h1>
+    <div id="map"></div>
+    <div id="info">Finding your location...</div>
+    <div id="theme" class="theme unknown">Fashion Theme: 🌍 Unknown</div>
+
+    <script src="https://unpkg.com/leaflet/dist/leaflet.js"></script>
+    <script>
+        const fashionThemes = {
+            "Brunei": { class: "baju-kurung", text: "🇧🇳 Baju Kurung & Songkok (Elegant & Modest)" },
+            "Japan": { class: "kimono", text: "🇯🇵 Kimono (Elegant & Traditional)" },
+            "South Korea": { class: "hanbok", text: "🇰🇷 Hanbok (Bright Colors & Flowing Sleeves)" },
+            "China": { class: "cheongsam", text: "🇨🇳 Cheongsam (Slim-Fit & Elegant)" },
+            "Malaysia": { class: "sarong", text: "🇲🇾 Sarong & Baju Melayu (Classic & Stylish)" },
+            "Indonesia": { class: "sarong", text: "🇮🇩 Batik & Sarong (Handcrafted Prints)" },
+            "India": { class: "kurta", text: "🇮🇳 Kurta & Saree (Vibrant & Traditional)" },
+            "Thailand": { class: "sarong", text: "🇹🇭 Thai Silk Sarong (Luxurious & Light)" },
+            "Vietnam": { class: "cheongsam", text: "🇻🇳 Ao Dai (Elegant & Graceful)" },
+            "Philippines": { class: "sarong", text: "🇵🇭 Barong Tagalog & Filipiniana (Classic Filipino Attire)" }
+        };
+
+        const map = L.map('map').setView([4.5, 114.7], 5);  // Center map on Brunei
+
+        // Use OpenStreetMap tiles
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+        }).addTo(map);
+
+        // Function to add markers for Asian countries
+        const countries = [
+            { name: "Brunei", lat: 4.5, lng: 114.7 },
+            { name: "Japan", lat: 36.2048, lng: 138.2529 },
+            { name: "South Korea", lat: 35.9078, lng: 127.7669 },
+            { name: "China", lat: 35.8617, lng: 104.1954 },
+            { name: "Malaysia", lat: 4.2105, lng: 101.9758 },
+            { name: "Indonesia", lat: -0.7893, lng: 113.9213 },
+            { name: "India", lat: 20.5937, lng: 78.9629 },
+            { name: "Thailand", lat: 15.8700, lng: 100.9925 },
+            { name: "Vietnam", lat: 14.0583, lng: 108.2772 },
+            { name: "Philippines", lat: 12.8797, lng: 121.7740 }
+        ];
+
+        countries.forEach(country => {
+            const { name, lat, lng } = country;
+            const theme = fashionThemes[name] || { class: "unknown", text: "🌍 Unknown Style" };
+
+            const marker = L.marker([lat, lng]).addTo(map);
+            marker.bindPopup(<b>${name}</b><br>${theme.text}).openPopup();
+
+            // Change the theme color based on country
+            marker.on('click', () => {
+                const themeElement = document.getElementById("theme");
+                themeElement.className = theme ${theme.class};
+                themeElement.innerHTML = Fashion Theme: ${theme.text};
+            });
+        });
+
+        // Add your current location marker (optional)
+        if (navigator.geolocation) {
+            navigator.geolocation.getCurrentPosition(function(position) {
+                const userLocation = [position.coords.latitude, position.coords.longitude];
+                const userMarker = L.marker(userLocation).addTo(map);
+                userMarker.bindPopup("<b>Your Location</b>").openPopup();
+                map.setView(userLocation, 6);  // Zoom into user's location
+            });
+        }
+    </script>
+
+</body>
+</html>
+
+<!-- REFERENCE: 
+https://leafletjs.com/ -->
